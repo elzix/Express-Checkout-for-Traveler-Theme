@@ -14,7 +14,7 @@ Create an account on our sandbox to get started on this [link](https://beep2.cel
 ## Getting started
 1. Download the zip.
 2. Upload the traveler-mula folder to your /wp-content/plugins/ directory or alternatively upload the traveler-mula.zip file via the plugin page of WordPress by clicking ‘Add New’ and selecting the zip from your computer.
-3. Install and activate the Gutenberg WordPress plugin (if pre WordPress 5.0).
+3. Install and activate the Traveler Mula WordPress plugin.
 4. Activate the Traveler Mula WordPress plugin through the ‘Plugins’ menu in WordPress.
 
 ## Setting up
