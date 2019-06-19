@@ -1,0 +1,132 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Traveler\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-06-19 04:50+0300\n"
+"PO-Revision-Date: 2019-06-19 04:50+0300\n"
+"Last-Translator: Erix Kivuti i@erixkivuti.men\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: inc/mula.php:31
+msgid "Enable Live Mode"
+msgstr ""
+
+#: inc/mula.php:35 inc/mula.php:44
+msgid "Allow you to enable live mode for use"
+msgstr ""
+
+#: inc/mula.php:40
+msgid "Enable Express checkout"
+msgstr ""
+
+#: inc/mula.php:49
+msgid "Service Code"
+msgstr ""
+
+#: inc/mula.php:52 inc/mula.php:108
+msgid "'s service code"
+msgstr ""
+
+#: inc/mula.php:57
+msgid "Client Code"
+msgstr ""
+
+#: inc/mula.php:60 inc/mula.php:116
+msgid "Your business client code"
+msgstr ""
+
+#: inc/mula.php:65
+msgid "IV Key"
+msgstr ""
+
+#: inc/mula.php:68 inc/mula.php:76 inc/mula.php:100 inc/mula.php:124
+#: inc/mula.php:132 inc/mula.php:156
+msgid "This is one of the pair of keys you need to encrypt your data"
+msgstr ""
+
+#: inc/mula.php:73
+msgid "Secret Key"
+msgstr ""
+
+#: inc/mula.php:81
+msgid "Access Key"
+msgstr ""
+
+#: inc/mula.php:84 inc/mula.php:140
+msgid "Pass this key when you are sending the parameters to checkout"
+msgstr ""
+
+#: inc/mula.php:89
+msgid "Client ID"
+msgstr ""
+
+#: inc/mula.php:92 inc/mula.php:148
+msgid ""
+"You use this as one of the pair of keys you need to generate an access token"
+msgstr ""
+
+#: inc/mula.php:97
+msgid "Client Secret"
+msgstr ""
+
+#: inc/mula.php:105
+msgid "Sandbox Service Code"
+msgstr ""
+
+#: inc/mula.php:113
+msgid "Sandbox Client Code"
+msgstr ""
+
+#: inc/mula.php:121
+msgid "Sandbox IV Key"
+msgstr ""
+
+#: inc/mula.php:129
+msgid "Sandbox Secret Key"
+msgstr ""
+
+#: inc/mula.php:137
+msgid "Sandbox Access Key"
+msgstr ""
+
+#: inc/mula.php:145
+msgid "Sandbox Client ID"
+msgstr ""
+
+#: inc/mula.php:153
+msgid "Sandbox Client Secret"
+msgstr ""
+
+#: inc/mula.php:234
+msgid "First Name"
+msgstr ""
+
+#: inc/mula.php:236
+msgid "Last Name"
+msgstr ""
+
+#: inc/mula.php:238
+msgid "Email"
+msgstr ""
+
+#: inc/mula.php:240
+msgid "Country Code"
+msgstr ""
+
+#: inc/mula.php:242
+msgid "Phone Number"
+msgstr ""
+
+#: inc/mula.php:386
+msgid "Mula"
+msgstr ""
+
+#: inc/mula.php:461
+msgid ""
+"Important: You will be redirected to Mula's website to securely complete "
+"your payment."
+msgstr ""
