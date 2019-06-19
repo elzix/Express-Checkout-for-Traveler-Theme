@@ -1,4 +1,5 @@
 # Mula express checkout for Traveler Theme
+![N|Solid](https://img.shields.io/badge/plugin-v0.9-lightgrey.svg)
 [![N|Solid](https://beep2.cellulant.com:9212/checkout/v2/assets/images/powered-by-mula.png)](https://shops.mula.africa/site/)
 [![N|Solid](traveler-mula/assets/img/travelerwp.png)](https://travelerwp.com/)
 
