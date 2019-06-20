@@ -29,6 +29,7 @@ class Traveler_Mula_Payment
 
         add_action('plugins_loaded', [$this, '_pluginSetup']);
         add_action('init', [$this, '_pluginLoader'], 20);
+        add_action('wp_enqueue_scripts', [$this, '_pluginEnqueue']);
         add_action( 'plugins_loaded', [ $this, '_pluginsLoaded', ], 10 );
     }
 
@@ -46,7 +47,9 @@ class Traveler_Mula_Payment
 
     public function _pluginEnqueue()
     {
-
+        wp_register_script( 'checkout-script', $this->pluginUrl . 'assets/js/checkout.js', '', '1.0', 1 );
+        if(is_page( 'checkout' ))
+            wp_enqueue_script('checkout-script'); // Enqueue it! 
     }
 
     public function loadTemplate($name, $data = null)

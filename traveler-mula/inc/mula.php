@@ -25,7 +25,22 @@ if (!class_exists('ST_Mula_Payment_Gateway')) {
 
 		function get_option_fields()
 		{
+			$json = file_get_contents(Traveler_Mula_Payment::get_inst()->pluginPath . 'inc/country.json');
+			$json = json_decode($json, true);
+			foreach ($json as $value)
+				$countries[] = ['label' => $value['cname'], 'value' => $value['iso2']];
+
 			return array(
+				array(
+					'id'		=> 'mula_site_country',
+					'label'	 => __('Website country', 'traveler-mula'),
+					'type'	  => 'select',
+					'choices'   => $countries,
+					'section'   => 'option_pmgateway',
+					'std'	   => 'KE',
+					'desc'	  => __('The default country code', 'traveler-mula'),
+					'condition' => 'pm_gway_st_mula_enable:is(on)'
+				),
 				array(
 					'id'		=> 'mula_enable_live',
 					'label'	 => __('Enable Live Mode', 'traveler-mula'),
@@ -250,32 +265,32 @@ if (!class_exists('ST_Mula_Payment_Gateway')) {
 			return true;
 		}
 
-        public function before_payment( $order_id )
-        {
-        	$cart = STCart::get_items();
-        	$cart = array_keys($cart);
-            $item = STCart::find_item($cart[0]);
+		public function before_payment( $order_id )
+		{
+			$cart = STCart::get_items();
+			$cart = array_keys($cart);
+			$item = STCart::find_item($cart[0]);
 			$checkin = new DateTime($item['data']['check_in']);
 			$checkout = new DateTime($item['data']['check_out']);
-            switch ($item['data']['st_booking_post_type']) {
-            	case 'st_car':
-				    $price_with_tax = (float)$item['data']['price_with_tax'];
-				    $price_coupon = floatval(STCart::get_coupon_amount());
-	                if ($price_coupon < 0) $price_coupon = 0;
-	                $price_with_tax -= $price_coupon;
-            		break;
-            	default:
-				    $extra_price = isset($item['data']['extra_price']) ?
-				    	floatval($item['data']['extra_price']) : 0;
-				    $price_coupon = floatval(STCart::get_coupon_amount());
-				    $price_with_tax = STPrice::getPriceWithTax(
-				    	$item['price'] + $extra_price);
-				    $price_with_tax -= $price_coupon;
-            		break;
-            }
+			switch ($item['data']['st_booking_post_type']) {
+				case 'st_car':
+					$price_with_tax = (float)$item['data']['price_with_tax'];
+					$price_coupon = floatval(STCart::get_coupon_amount());
+					if ($price_coupon < 0) $price_coupon = 0;
+					$price_with_tax -= $price_coupon;
+					break;
+				default:
+					$extra_price = isset($item['data']['extra_price']) ?
+						floatval($item['data']['extra_price']) : 0;
+					$price_coupon = floatval(STCart::get_coupon_amount());
+					$price_with_tax = STPrice::getPriceWithTax(
+						$item['price'] + $extra_price);
+					$price_with_tax -= $price_coupon;
+					break;
+			}
 
-            $productCode = $cart[0];
-            $item = get_post($productCode);
+			$productCode = $cart[0];
+			$item = get_post($productCode);
 			$accessKey = (st()->get_option('mula_enable_live') == 'off')?
 				st()->get_option('mula_test_access_key') : st()->get_option('mula_access_key');
 			$serviceCode = (st()->get_option('mula_enable_live') == 'off')?
@@ -308,6 +323,9 @@ if (!class_exists('ST_Mula_Payment_Gateway')) {
 				$checkin->format('Y-m-d H:i:s'):$tomorrow->format('Y-m-d H:i:s');
 
 			$blogURL = parse_url(get_bloginfo('url'));
+			$check_out_url = st()->get_option('page_checkout', '');
+			$check_out_url = ($check_out_url != '')?
+				get_permalink((int)$check_out_url) : get_bloginfo('url').'/checkout/';
 			$purchase = array(
 				'merchantTransactionID' => $order_id, // (req) string: The merchant's unique transaction identifier.
 				'customerFirstName' => STInput::post('st_first_name'), // (req) string: The customer's first name.
@@ -323,43 +341,43 @@ if (!class_exists('ST_Mula_Payment_Gateway')) {
 				'productCode' => $productCode, // not documented
 				// 'payerClientCode' => $payerClientCode, // not documented
 				'MSISDN' => $phone, // (req) integer: The customer's mobile number.
-				'countryCode' => 'KE', // (req) string: The merchant's default country country code.
+				'countryCode' => st()->get_option('mula_site_country','KE'), // (req) string: The merchant's default country country code.
 				'accessKey' => $accessKey, // (req) string: Pass this key when you are sending the parameters to checkout
 				'dueDate' => $dueDate, // (req) string: The transaction's due date in the format YYYY-MM-DD HH:mm:ss. This should be in UTC time.
 				'successRedirectUrl' => $this->get_return_url($order_id),
-				'failRedirectUrl' => get_bloginfo('url').'/checkout/',
+				'failRedirectUrl' => $check_out_url,
 				'paymentWebhookUrl' => $this->get_return_url($order_id).'&callback='.md5($serviceCode.$order_id),
 			);
 
 			return $this->encryptData($purchase);
-        }
+		}
 
 		function do_checkout($order_id)
 		{
 			$library = (st()->get_option('mula_enable_live') == 'off')?
 				'https://beep2.cellulant.com:9212/checkout/v2/mula-checkout.js' : 
 				'https://beep2.cellulant.com:9212/checkout/v2/mula-checkout.js'; // In case it's different
-            $encrypted = $this->before_payment( $order_id );
-            $file = fopen($library,"r");
-            $mulaURL = fgets($file);
+			$encrypted = $this->before_payment( $order_id );
+			$file = fopen($library,"r");
+			$mulaURL = fgets($file);
 			fclose($file);
 			preg_match('/(?:EXPRESS_CHECKOUT_URL:")(.*)(?:",MUL)/', $mulaURL, $payURL);
-            $mulaURL = add_query_arg( $encrypted, $payURL[1] );
+			$mulaURL = add_query_arg( $encrypted, $payURL[1] );
 
-            return [
-                'redirect' => $mulaURL,
-                'status'   => true
-            ];
-            
+			return [
+				'redirect' => $mulaURL,
+				'status'   => true
+			];
+			
 		}
 
-        function complete_purchase( $order_id )
-        {
-            return true;
-        }
+		function complete_purchase( $order_id )
+		{
+			return true;
+		}
 
-        function check_complete_purchase( $order_id )
-        {
+		function check_complete_purchase( $order_id )
+		{
 			$serviceCode = (st()->get_option('mula_enable_live') == 'off')?
 				st()->get_option('mula_test_service_code') : st()->get_option('mula_service_code');
 
@@ -379,7 +397,7 @@ if (!class_exists('ST_Mula_Payment_Gateway')) {
 				$status = get_post_meta($order_code, 'status', true);
 				return ['status'=>$status];
 			}
-        }
+		}
 
 		function get_name()
 		{
@@ -441,9 +459,9 @@ if (!class_exists('ST_Mula_Payment_Gateway')) {
 			return $this->_gateway_id;
 		}
 
-        public function stop_change_order_status(){
-            return false;
-        }
+		public function stop_change_order_status(){
+			return false;
+		}
 
 		function is_check_complete_required()
 		{
